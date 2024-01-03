@@ -64,36 +64,40 @@ const CompanyContext = ( { children }:{ children:React.ReactNode} ) => {
     const [adding, setAdding] = useState(false);
    
     useEffect(() => {  
-        const initCompanys = async() => {
-            setLoading(true);
-            await axiosClient.get('/companies')
-            .then(response =>{
-                if(response.status === 200){
-                  let { company_ } = response.data;
-                  let data = {
-                    id:company_.id ?company_.id:0,
-                    name: company_.name ? company_.name:"",
-                    phone: company_.phone ? company_.phone:"",
-                    email: company_.email ? company_.email:"",
-                    address: company_.address ? company_.address:"",
-                    image: company_.logo ? company_.logo:"",
-                  }
-                  
-                  dispatch({
-                    type:'INITIAL_COMPANY',
-                    payload:{company: data}
-                  });
-                  setTimeout(() => {
-                    setLoading(false);
-                  }, 1000);
-                }
-            })
-            .catch(error =>{
-                console.log(error);
-            })
-        };
-
-        initCompanys();
+      const initCompanys = async() => {
+        setLoading(true);
+        await axiosClient.get('/companies')
+        .then(response =>{
+            if(response.status === 200){
+              let { company_ } = response.data;
+              
+              let data = {
+                id:company_?.id ?company_.id:0,
+                name: company_?.name ? company_.name:"",
+                phone: company_?.phone ? company_.phone:"",
+                email: company_?.email ? company_.email:"",
+                address: company_?.address ? company_.address:"",
+                image: company_?.logo ? company_.logo:"",
+              }
+              
+              
+              dispatch({
+                type:'INITIAL_COMPANY',
+                payload:{company: data}
+              });
+              setTimeout(() => {
+                setLoading(false);
+              }, 1000);
+            }
+        })
+        .catch(error =>{
+            console.log(error);
+            setTimeout(() => {
+              setLoading(false);
+            }, 1000);
+        })
+      };
+      initCompanys();
     }, []);
 
     const addCompany = async( e: React.FormEvent<HTMLFormElement>, company:Company ) => {
@@ -108,51 +112,49 @@ const CompanyContext = ( { children }:{ children:React.ReactNode} ) => {
 
       await axiosClient.post('/company', companyForm)
       .then(response => {
-          if(response.status == 201){
-              const { company_ } = response.data;
-              let data = {
-                id: company_.id,
-                name: company_.name,
-                phone: company_.phone,
-                email: company_.email,
-                address: company_.address,
-                image : company_.logo,
-              }
+        if(response.status == 201){
+            const { company_ } = response.data;
+            let data = {
+              id: company_.id,
+              name: company_.name,
+              phone: company_.phone,
+              email: company_.email,
+              address: company_.address,
+              image : company_.logo,
+            }
+            dispatch({
+                type:'ADD_COMPANY',
+                payload:{company:data, errors:null}
+            });
 
+            window.toast.fire({
+                icon: 'success',
+                title: "New Company is added successfully",
+            });
+
+            setTimeout(() => {
+                setAdding(false);
+            }, 2000);
+        }
+      })
+      .catch(res =>{
+        if(res){
+          if(res.response.status == 422){
               dispatch({
                   type:'ADD_COMPANY',
-                  payload:{company:data, errors:null}
+                  payload:{company:{} as Company, errors: res.response.data.errors}
               });
 
               window.toast.fire({
-                  icon: 'success',
-                  title: "New Company is added successfully",
+                  icon: 'error',
+                  title: res.response.data.message,
               });
-
-              setTimeout(() => {
-                  setAdding(false);
-              }, 2000);
           }
-      })
-      .catch(res =>{
-          if(res){
-              if(res.response.status == 422){
-                  dispatch({
-                      type:'ADD_COMPANY',
-                      payload:{company:{} as Company, errors: res.response.data.errors}
-                  });
-  
-                  window.toast.fire({
-                      icon: 'error',
-                      title: res.response.data.message,
-                  });
-              }
-
-              setTimeout(() => {
-                  setAdding(false);
-              }, 1000);
-              console.log(res);
-          }
+          setTimeout(() => {
+            setAdding(false);
+          }, 1000);
+          console.log(res);
+        }
       })
     }
 

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom';
 import router from './route/Router.tsx';
@@ -15,7 +15,6 @@ import '../src/assets/main.scss';
     interface Window {
       Swal: any; 
       toast:any;
-
     }
   }
 

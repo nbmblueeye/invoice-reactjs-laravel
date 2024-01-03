@@ -29,6 +29,7 @@ type InvoiceContextInit = {
     state:StateType, 
     getInvoices:(url?:string) => Promise<void>;
     searchInvoices:(e:React.FormEvent<HTMLFormElement>, search:string) => Promise<void>;
+    searchParams?:{},
     filterInvoices:(filter:number) => Promise<void>;
     addInvoice:(e: React.FormEvent<HTMLFormElement>, invoice:Invoice) => Promise<void>;
     getInvoice:(id:number) => Invoice;
@@ -93,15 +94,13 @@ const createInvoiceContext = createContext({} as InvoiceContextInit);
 export const useInvoiceContext = () => useContext(createInvoiceContext);
 
 const InvoiceContext = ({ children }:{ children:React.ReactNode}) => {
-
+    
     const [ state, dispatch ] = useReducer(reducer, INITIAL_STATE);
-
     const [loading, setLoading] = useState(false);
     const [adding, setAdding] = useState(false);
     const [updating, setUpdating] = useState(false);
     const [clearAdding, setClearAdding] = useState(false);
-    let [searchParams, setSearchParams] = useSearchParams();
-    
+    let [searchParams, setSearchParams] = useSearchParams({});
     const [clearSearch, setClearSearch] = useState(false);
 
     useEffect(() => {
@@ -535,6 +534,7 @@ const InvoiceContext = ({ children }:{ children:React.ReactNode}) => {
         state,
         getInvoices,
         searchInvoices,
+        searchParams,
         filterInvoices,
         addInvoice,
         getInvoice,

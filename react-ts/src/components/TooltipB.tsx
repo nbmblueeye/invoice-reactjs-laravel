@@ -15,10 +15,9 @@ const TooltipB = ({title, children}:Props) => {
     useEffect(() => {
       let tooltip:any;
       if(toolRef.current){
-         const tooltipList = [toolRef.current].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
+         [toolRef.current].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
          tooltip = Tooltip.getOrCreateInstance(toolRef.current)
-      }
-      
+      }  
       return () => {
         tooltip.hide()
       }

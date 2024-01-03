@@ -115,6 +115,9 @@ const ProductContext = ( { children }:{ children:React.ReactNode} ) => {
           })
           .catch(error =>{
               console.log(error);
+              setTimeout(() => {
+                setLoading(false);
+              }, 1000);
           })
         };
 

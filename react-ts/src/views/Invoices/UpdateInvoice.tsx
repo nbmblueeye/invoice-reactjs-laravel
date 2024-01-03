@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import InvoiceContext, { useInvoiceContext } from "../../context/InvoiceContext";
+import { useInvoiceContext } from "../../context/InvoiceContext";
 import { useParams, Link } from 'react-router-dom';
 import { Invoice, InvoiceItem , Product ,Customer } from '../../types/InvoiceTypes';
 import ProductListModal from '../../components/ProductListModal';
@@ -92,7 +92,6 @@ const UpdateInvoice = () => {
     const setCustomer = (e:React.ChangeEvent<HTMLSelectElement>) => {
         setInvoice({...invoice, customer: {...invoice.customer, id: parseInt(e.target.value)}})
     }
-
 
     let subTotal = useMemo<number>(() => {
         let sub_total = 0;
